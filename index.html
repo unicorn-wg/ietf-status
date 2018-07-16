@@ -27,21 +27,26 @@ h2 { font-size: 24px; }
 input {
     margin: 0; padding: 2px 20px; border: 1px solid #999;
 }
-#yes, #no, #maybe, #error, #thinking {
+#yes, #no, #maybe, #error, #thinking, #askagain {
     display:none;
 }
 #qecho { color: #000; }
+#askagain { font-size: 18px; }
     </style>
     <title>IETF Status</title>
     <script type="text/javascript">
 function answer(v) {
     document.getElementById("thinking").style.display = 'none';
+    var aa = document.getElementById("askagain");
+    aa.style.display = 'block';
+    aa.firstChild.href = window.location.href;
     var e = document.getElementById(v);
     if (!e) {
         e = document.getElementById("error");
     }
     e.style.display = 'block';
 }
+
 function ask() {
     document.getElementById("thinking").style.display = 'block';
     var q = document.getElementById("q").value.trim();
@@ -98,6 +103,7 @@ function ask() {
       <h2 id="maybe">Maybe.  The IETF thinks that this is might be a good idea, but it's still working on it.</h1>
       <h2 id="error">No idea.  We encountered an error.</h1>
       <p id="thinking">Thinking...</p>
+      <p id="askagain"><a href=".">Ask about something else</a>.</p>
     </div>
   </body>
 </html>
