@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/css?family=Asap|Paytone+One" rel="stylesheet">
+    <style>
+body, input[type="text"], input[type="submit"] {
+    font-family: 'Asap', sans-serif; font-size: 24px;
+    text-align: center;
+}
+body, html, #container {
+    width: 100%; height: 100%;
+}
+#container {
+    margin: 0 auto; position: absolute;
+    left: 50%; width: 800px; margin-left: -400px;
+    top: 50%; height: 500px; margin-top: -250px;
+}
+h1, h2 {
+    font-family: 'Paytone One', cursive; color: #555;
+    margin: 50px;
+}
+h1 { font-size: 32px; }
+h2 { font-size: 24px; }
+input {
+    margin: 0; padding: 2px 20px; border: 1px solid #999;
+}
+#yes, #no, #maybe, #error, #thinking {
+    display:none;
+}
+#qecho { color: #000; }
+    </style>
+    <title>IETF Status</title>
+    <script type="text/javascript">
+function answer(v) {
+    document.getElementById("thinking").style.display = 'none';
+    var e = document.getElementById(v);
+    if (!e) {
+        e = document.getElementById("error");
+    }
+    e.style.display = 'block';
+}
+function ask() {
+    document.getElementById("thinking").style.display = 'block';
+    var q = document.getElementById("q").value.trim();
+    document.getElementById("question").style.display = 'none';
+    document.getElementById("qecho").innerText = q.replace(/-/g, '\u2060-\u2060');
+
+    var isrfc = /^rfc\s*(\d+)$/i;
+    var m = isrfc.exec(q);
+    var positive = 'yes';
+    var prefix = 'rfc';
+    if (!m) {
+        var isdraft = /^(draft-ietf-\D+)(?:-\d{2})?$/i;
+        m = isdraft.exec(q);
+        positive = 'maybe';
+        prefix = '';
+    }
+
+    if (m) {
+        fetch('https://datatracker.ietf.org/doc/' + prefix + m[1] + '/doc.json')
+            .then(response => response.body.json())
+            .then(status => {
+                console.log('status', status);
+                if (status.std_level === 'Proposed Standard' ||
+                    status.std_level === 'Draft Standard' ||
+                    status.std_level === 'Internet Standard') {
+                    answer(positive);
+                } else {
+                    answer('no');
+                }
+            })
+            .catch(err => {
+                console.log('error', err);
+                answer('error');
+            });
+        return false;
+    }
+
+    answer('no');
+    return false;
+}
+    </script>
+  </head>
+  <body>
+    <div id="container">
+      <h1>Does the IETF think <span id="qecho">this</span> is a good idea?</h1>
+      <form action="" method="GET" id="form" onSubmit="return ask();">
+        <div id="question">
+          <input type="text" name="question" id="q"><input type="submit" name="?" id="submit" value="Ask">
+        </div>
+      </form>
+      <h2 id="no">No.  The IETF has no opinion on this.</h1>
+      <h2 id="yes">Yes.  The IETF thinks that this is a good idea.</h1>
+      <h2 id="maybe">Maybe.  The IETF thinks that this is might be a good idea, but it's still working on it.</h1>
+      <h2 id="error">No idea.  We encountered an error.</h1>
+      <p id="thinking">Thinking...</p>
+    </div>
+  </body>
+</html>
