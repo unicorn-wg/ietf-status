@@ -76,7 +76,7 @@ function ask() {
                 console.log('error', err);
                 answer('error');
             });
-        q = q.replace(/-/g, '\u2060-\u2060');
+        q = q.replace(/-/g, '\u2060-\u2060').replace(/^rfc/, 'RFC ');
     } else {
         answer('no');
     }
@@ -93,7 +93,7 @@ function ask() {
           <input type="text" name="question" id="q"><input type="submit" name="?" id="submit" value="Ask">
         </div>
       </form>
-      <h2 id="no">No.  The IETF has no opinion on this.</h1>
+      <h2 id="no">No.  The IETF has no opinion on this topic.</h1>
       <h2 id="yes">Yes.  The IETF thinks that this is a good idea.</h1>
       <h2 id="maybe">Maybe.  The IETF thinks that this is might be a good idea, but it's still working on it.</h1>
       <h2 id="error">No idea.  We encountered an error.</h1>
