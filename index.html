@@ -46,7 +46,6 @@ function ask() {
     document.getElementById("thinking").style.display = 'block';
     var q = document.getElementById("q").value.trim();
     document.getElementById("question").style.display = 'none';
-    document.getElementById("qecho").innerText = q.replace(/-/g, '\u2060-\u2060');
 
     var isrfc = /^rfc\s*(\d+)$/i;
     var m = isrfc.exec(q);
@@ -60,7 +59,8 @@ function ask() {
     }
 
     if (m) {
-        fetch('https://datatracker.ietf.org/doc/' + prefix + m[1] + '/doc.json')
+        q = prefix + m[1];
+        fetch('https://datatracker.ietf.org/doc/' + q + '/doc.json')
             .then(response => response.body.json())
             .then(status => {
                 console.log('status', status);
@@ -76,10 +76,11 @@ function ask() {
                 console.log('error', err);
                 answer('error');
             });
-        return false;
+        q = q.replace(/-/g, '\u2060-\u2060');
+    } else {
+        answer('no');
     }
-
-    answer('no');
+    document.getElementById("qecho").innerText = q;
     return false;
 }
     </script>
